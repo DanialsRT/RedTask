@@ -1,19 +1,27 @@
-const commando = require('discord.js-commando');
-const path = require('path');
-//const config = require(path.join(__dirname, 'config', 'config.json'))
-const client = new commando.CommandoClient({
-    owner: process.env.ownerId,
-    commandPrefix: process.env.prefix
-});
-client.login(process.env.TOKEN);
-client.registry.registerGroups([
-    ['mod', 'mod commands'],
-    ['misc', 'misc commands'],
-    ['roles', 'roles commands'],
-    ['music', 'music bot commands']
-]).registerDefaults()
-.registerCommandsIn(path.join(__dirname, 'commands'));
+const discord = require('discord.js');
+const client = new discord.Client();
+const config = require('./config.json');
+const { handler } = require('./commands');
+
+client.login(config.TOKEN);
 
 client.on('ready', () => {
-    console.log("Bot has logged in.");
+    console.log(`${client.user.username} has logged in.`);
+});
+
+client.on('message', message => {
+    if(message.author.bot) return;
+
+    if(message.content.toLowerCase().startsWith("?fun")) {
+        handler(message, 'fun');
+    }
+    else if(message.content.toLowerCase().startsWith("?misc")) {
+        handler(message, 'misc');
+    }
+    else if(message.content.toLowerCase().startsWith("?play")) {
+        handler(message, 'play');
+    }
+    else if(message.content.toLowerCase().startsWith("?queue")) {
+        handler(message, 'queue');
+    }
 });
